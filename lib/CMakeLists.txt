@@ -27,6 +27,7 @@ set_target_properties(libmosquitto PROPERTIES
 	SOVERSION 0
 )
 
+install(FILES ../man/libmosquitto.3 DESTINATION ${MANDEST}/man3)
 install(TARGETS libmosquitto RUNTIME DESTINATION ${BINDEST} LIBRARY DESTINATION ${LIBDEST})
 
 if (UNIX)
