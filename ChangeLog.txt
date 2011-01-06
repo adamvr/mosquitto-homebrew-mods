@@ -1,0 +1,279 @@
+0.9.1 - 20101203
+================
+
+- Add missing code for parsing the "bind_address" configuration option.
+- Fix missing include when compiling with tcp-wrappers support.
+- Add linker version script for C library to control exported functions.
+
+0.9 - 20101114
+==============
+
+- Client and message data is now stored in memory with custom routines rather
+  than a sqlite database. This removes the dependencies on sqlite, pcre and
+  sqlite3-pcre. It also means that the persistent database format has had to
+  be reimplemented in a custom format. Optional support for importing old
+  sqlite databases is provided.
+- Added IPv6 support for mosquitto and the clients.
+- Provide username and password support for the clients and client libraries.
+  This is part of the new MQTT v3.1 spec.
+- The broker supports the username and password connection flags, but will not
+  do anything with the username and password.
+- Python callback functions now optionally take an extra argument which will
+  return the user object passed to the Mosquitto() constructor, or the calling
+  python object itself if nothing was given to Mosquitto().
+- Remove the mosquitto command line option "-i interface".
+- Remove the mosquitto.conf "interface" variable.
+- Add support for the listener config variable (replaces the interface
+  variable)
+- Add support for the bind_address config variable.
+- Change the port config variable behaviour to match that of rsmb (applies to
+  the default listener only, can be given just once).
+- Fix QoS 2 protocol compliance - stop sending duplicate messages and handle
+  timeouts correctly. Fixes bug #598290.
+- Set retain flag correctly for outgoing messages. It should only be set for
+  messages sent in response to a subscribe command (ie. stale data).
+- Fix bug in returning correct CONNACK result to on_connect client callback.
+- Don't send client will if it is disconnected for exceeding its keepalive
+  timer.
+- Fix client library unsubscribe function incorrectly sending a SUBSCRIBE
+  command when it should be UNSUBSCRIBE. 
+- Fix max_inflight_messages and max_queued_messages operation. These
+  parameters now apply only to QoS 1 and 2 messages and are used regardless of
+  the client connection state.
+- mosquitto.conf now installed to /etc/mosquitto/mosquitto.conf instead of
+  /etc/mosquitto.conf. The /etc/mosquitto/ directory will be used for password
+  and access control files in the future.
+- Give the compile time option of using 32-bit integers for the database IDs
+  instead of 64-bit integers. This is useful where htobe64()/be64toh() are not
+  available or for embedded systems for example.
+- The DUP bit is now set correctly when resending PUBREL messages.
+- A port to Windows native has been partially completed. This currently drops a
+  number of features, including the ability to change configuration parameters
+  and persistent storage.
+
+0.8.3 - 20101004
+================
+
+- Fix QoS 2 protocol compliance - stop sending duplicate messages and handle
+  timeouts correctly. Fixes bug #598290. (backported from future 0.9 code)
+
+0.8.2 - 20100815
+================
+
+- Fix default loop() timeout value in mosquitto.py. Previous value was 0,
+  causing high cpu load.
+- Fix message handling problem in client library when more than one message was
+  in the client queue.
+- Fix the logic used to determine whether a QoS>0 message needs to be retried.
+- Fix the Python sub.py example so that it quits on error.
+
+0.8.1 - 20100812
+================
+
+- Improve python interface
+- Fix incorrect return value from message delete function
+- Use logging function to print error messages in clients.
+- Fix python installation script DESTDIR.
+- Fix library destination path for 64-bit machines.
+
+0.8 - 20100807
+==============
+
+- Topics starting with a / are treated as distinct to those not starting with
+  a /. For example, /topic/path is different to topic/path. This matches the
+  behaviour of rsmb.
+- Correctly calculate the will QoS on a new client connection (bug #597451).
+- Add "addresses" configuration file variable as an alias of "address", for
+  better rsmb compatibility.
+- Bridge clean_session setting is now false, to give more sensible behaviour
+  and be more compatible with rsmb.
+- Add cleansession variable for configuring bridges.
+- Add keepalive_interval variable for bridges.
+- Remove default topic subscription for mosquitto_sub because the old
+  behaviour was too confusing.
+- Added a C client library, which the pub and sub clients now use.
+- Added a C++ client library (bound to the C library).
+- Added a Python client library (bound to the C library).
+- Added CMake build scripts to allow the library and clients (not the broker)
+  to be compiled natively on Windows.
+
+0.7 - 20100615
+==============
+
+- mosquitto_pub can now send null (zero length) messages.
+- Don't store QoS=0 messages for disconnected clients with subscriptions of
+  QoS>0.
+- accept() all available sockets when new clients are connecting, rather than
+  just one.
+- Add option to print debug messages in pub and sub clients.
+- hg revision is now exported via $SYS/broker/changeset
+- Send Will when client exceeds keepalive timer and is disconnected.
+- Check to see if a client has a will before sending it.
+- Correctly deal with clients connecting with the same id multiple times.
+- Add compile time option to disable heap memory tracking.
+- Use poll() instead of select() to allow >1024 clients.
+- Implement max_connections.
+- Run VACUUM on in-memory database on receiving SIGUSR2.
+- Fix bridge keepalive timeouts and reconnects.
+- Don't attempt to drop root privileges when running on Windows as this isn't
+  well supported (bug #586231).
+
+0.6.1 - 20100506
+================
+
+- Fix DB auto upgrade for messages table.
+
+0.6 - 20100505
+==============
+
+- Basic support for connecting multiple MQTT brokers together (bridging).
+- mosquitto_sub can now subscribe to multiple topics (limited to a global QoS).
+- mosquitto_pub can now send a file as a message.
+- mosquitto_pub can now read all of stdin and send it as a message.
+- mosquitto_pub can now read stdin and send each line as a message.
+- mosquitto will now correctly run VACUUM on the persistent database on exit.
+- Implement a more efficient database design, so that only one copy of each
+  message is held in the database, rather than one per subscribed client.
+- Add the store_cleanup_interval config option for dealing with the internal
+  message store.
+- Add support for disabling "clean session" for the sub client.
+- Add support for automatic upgrading of the mosquitto DB from v1 to v2.
+- Add persistence_file config option to allow changing the filename of the
+  persistence database. This allows multiple mosquitto DBs to be stored in the
+  same location whilst keeping persistence_location compatible with rsmb.
+- Don't store QoS=0 messages for disconnected clients. Fixes bug #572608. This
+  wasn't correctly fixed in version 0.5.
+- Don't disconnect clients if they send a PUBLISH with zero length payload
+  (bug #573610).
+- If a retained message is received with a zero length payload, the retained
+  message for that topic is deleted.
+- Send through zero length messages.
+- Produce a warning on unsupported rsmb options instead of quitting.
+- Describe clean session flag in the mqtt man page.
+- Implement the max_inflight_messages and max_queued_messages features in the
+  broker.
+
+0.5.4 - 20100311
+================
+
+- Fix memory allocation in mqtt3_fix_sub_topic() (bug #531861).
+- Remove accidental limit of 100 client connections.
+- Fix mosquitto_pub handling of messages with QoS>0 (bug #537061).
+
+0.5.3 - 20100303
+================
+
+- Will messages are now only sent when a client disconnects unexpectedly.
+- Fix all incoming topics/subscriptions that start with a / or contain
+  multiple / in a row (//).
+- Do actually disconnect client when it sends an empty subscription/topic string.
+- Add missing $SYS/broker/clients/total to man page.
+
+0.5.2 - 20100302
+================
+
+- Always update last backup time, so that the backup doesn't run every time
+  through the main loop once autosave_interval has been reached.
+- Report $SYS/broker/uptime in the same format as rsmb.
+- Make mandatory options obvious in usage output and man page of mosquitto_pub.
+  Fixes bug #529990.
+- Treat subscriptions with a trailing slash correctly. This should fix bugs
+  #530369 and #530099.
+  
+0.5.1 - 20100227
+================
+
+- Must daemonise before pid file is written.
+
+0.5 - 20100227
+==============
+
+- No longer store QoS=0 messages for disconnected clients that do not have
+  clean start set.
+- Rename msg_timeout option to retry_interval for better rsmb compatibility.
+- Change persistence behaviour. The database is now stored in memory even if
+  persistence is enabled. It is written to disk when mosquitto exits and also at
+  periodic intervals as defined by the new autosave_interval option.
+- The writing of the persistence database may be forced by sending mosquitto
+  the SIGUSR1 signal.
+- Clients that do not send CONNECT as their first command are now
+  disconnected.
+- Boolean configuration values may now be specified with true/false as well as
+  1/0.
+- Log message on CONNECT with invalid protocol or protocol version.
+- Default sqlite3-pcre path on Linux is now /usr/lib/sqlite3/pcre.so to match
+  future sqlite3-pcre packages.
+- Add mosquitto_sub and mosquitto_pub, simple clients for subscribe/publish.
+- Add man pages for clients.
+- Add general man page on mqtt.
+- Root privileges are now dropped only after attempting to write a pid file
+  (if configured). This means that the pid file can be written to /var/run/
+  directly and should fix bug #523183.
+
+0.4.2 - 20100203
+================
+
+- Fix segfault on client connect with invalid protocol name/version.
+
+0.4.1 - 20100112
+===============
+
+- Fix regex used for finding retained messages to send on new subscription.
+
+0.4 - 20100105
+==============
+
+- Added support for wildcard subscriptions using + and #.
+- All network operations are now non-blocking and can cope with partial
+  packets, meaning that networking should be a lot more reliable.
+- Total messsages/bytes sent/received are now available in $SYS.
+- Improved logging information - use client ip address and id instead of
+  socket number.
+- Broker build timestamp is available in $SYS.
+- Keepalive==0 is now correctly treated as "never disconnect".
+- Fixed manpage installation.
+- Fixed incorrect $SYS hierarchy locations in documentation and code.
+- Debug type log messages are no longer sent to "topics".
+- Default logging destination no longer includes "topics" to prevent possible
+  error logging to the db before it is initialised.
+- Periodic $SYS messages can now be disabled.
+- stdout and stderr are flushed when logging to them to give more timely
+  updates.
+- dup is now set correctly when resending messages.
+- Database format bumped due to topic column naming fix.
+
+0.3 - 20091217
+==============
+
+- The port option in the configuration file and --port command line argument
+  may now be given any number of times to make mosquitto listen on multiple
+  sockets.
+- Add new config file and command line option "interface" to specify an
+  interface to listen on, rather than all interfaces.
+- Added host access control through tcp-wrappers support.
+- Set SO_REUSEADDR on the listening socket so restart is much quicker.
+- Added support for tracking current heap memory usage - this is published on
+  the topic "$SYS/broker/heap/current size"
+- Added code for logging to stderr, stdout, syslog and topics. 
+- Added logging to numerous places - still plenty of scope for more.
+
+0.2 - 20091204
+==============
+
+- Replaced the command line option --foreground with --daemon, swapping the
+  default behaviour.
+- Added the command line option --config-file, to specify a config file to
+  load.  If this is not given, no config file is load and the default options
+  are used.
+- Added the command line option --port for specifying the port to listen on.
+  This overrides values in the config file.
+- Don't use persistence by default.
+- Default behaviour is now more sane when run by a normal user with no command
+  line options (combination of above changes).
+- Added option user to config file, defaulting to a value of mosquitto. If
+  this value isn't blank and mosquitto is started by root, then it will drop
+  privileges by changing to the user and its primary group. This replaces the
+  current behaviour of refusing to start if run by root.
+- Fix non-persistent mode, which would never work in the previous release.
+- Added information on default values of msg_timeout and sys_interval to the
+  mosquitto.conf man page. (closes bug #492045).

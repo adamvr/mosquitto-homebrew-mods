@@ -1,0 +1,146 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH mosquitto_pub 1 "3 December 2010" "" ""
+.SH NAME
+mosquitto_pub \- an mqtt version 3.1 client for publishing simple messages
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBmosquitto_pub\fR \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+[\fB-d\fR] [\fB-h\fR \fIhostname\fR] [\fB-i\fR \fIclient_id\fR] [\fB-p\fR \fIport number\fR] [\fB-q\fR \fImessage QoS\fR] [\fB-r\fR] { \fB-f\fR \fIfile\fR | \fB-l\fR | \fB-m\fR \fImessage\fR | \fB-n\fR | \fB-s\fR} [
+\fB-u\fR \fIusername\fR 
+[\fB--pw\fR \fIpassword\fR]
+] [
+\fB--will-topic\fR \fItopic\fR 
+[\fB--will-payload\fR \fIpayload\fR]
+[\fB--will-qos\fR \fIqos\fR]
+[\fB--will-retain\fR]
+] \fB-t\fR \fImessage-topic\fR 
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SH DESCRIPTION
+\fBmosquitto_pub\fR is a simple mqtt version 3 client that will publish a single message on a topic and exit.
+.SH OPTIONS
+.TP 
+\*(T<\fB\-d\fR\*(T>, \*(T<\fB\-\-debug\fR\*(T>
+Enable debug messages.
+.TP 
+\*(T<\fB\-f\fR\*(T>, \*(T<\fB\-\-file\fR\*(T>
+Send the contents of a file as the message.
+.TP 
+\*(T<\fB\-h\fR\*(T>, \*(T<\fB\-\-host\fR\*(T>
+Specify the host to connect to. Defaults to localhost.
+.TP 
+\*(T<\fB\-i\fR\*(T>, \*(T<\fB\-\-id\fR\*(T>
+The id to use for this client. If not given, defaults to mosquitto_pub_ appended with the process id of the client.
+.TP 
+\*(T<\fB\-l\fR\*(T>, \*(T<\fB\-\-stdin\-line\fR\*(T>
+Send messages read from stdin, splitting separate lines into separate messages. Note that blank lines won't be sent.
+.TP 
+\*(T<\fB\-m\fR\*(T>, \*(T<\fB\-\-message\fR\*(T>
+Send a single message from the command line.
+.TP 
+\*(T<\fB\-n\fR\*(T>, \*(T<\fB\-\-null\-message\fR\*(T>
+Send a null (zero length) message.
+.TP 
+\*(T<\fB\-p\fR\*(T>, \*(T<\fB\-\-port\fR\*(T>
+Connect to the port specified instead of the default 1883.
+.TP 
+\*(T<\fB\-\-pw\fR\*(T>
+Provide a password to be used for authenticating with
+the broker. Using this argument without also specifying a
+username is invalid. This requires a broker that supports
+MQTT v3.1. See also the --username option.
+.TP 
+\*(T<\fB\-q\fR\*(T>, \*(T<\fB\-\-qos\fR\*(T>
+Specify the quality of service to use for the message, from 0, 1 and 2. Defaults to 0.
+.TP 
+\*(T<\fB\-r\fR\*(T>, \*(T<\fB\-\-retain\fR\*(T>
+If retain is given, the message will be retained as a "last know good" value on the broker. See \fBmqtt\fR(7) for more information.
+.TP 
+\*(T<\fB\-s\fR\*(T>, \*(T<\fB\-\-stdin\-file\fR\*(T>
+Send a message read from stdin, sending the entire content as a single message.
+.TP 
+\*(T<\fB\-t\fR\*(T>, \*(T<\fB\-\-topic\fR\*(T>
+The mqtt topic on which to publish the message. See \fBmqtt\fR(7) for more information on mqtt topics.
+.TP 
+\*(T<\fB\-u\fR\*(T>, \*(T<\fB\-\-username\fR\*(T>
+Provide a username to be used for authenticating with
+the broker. This requires a broker that supports MQTT v3.1.
+See also the --pw argument.
+.TP 
+\*(T<\fB\-\-will\-payload\fR\*(T>
+Specify a message that will be stored by the broker
+and sent out if this client disconnects unexpectedly. This
+must be used in conjunction with --will-topic.
+.TP 
+\*(T<\fB\-\-will\-qos\fR\*(T>
+The QoS to use for the Will. Defaults to 0. This must
+be used in conjunction with --will-topic.
+.TP 
+\*(T<\fB\-\-will\-retain\fR\*(T>
+If given, if the client disconnects unexpectedly the
+message sent out will be treated as a retained message.
+This must be used in conjunction with --will-topic.
+.TP 
+\*(T<\fB\-\-will\-topic\fR\*(T>
+The topic on which to send a Will, in the event that
+the client disconnects unexpectedly.
+.SH WILLS
+mosquitto_sub can register a message with the broker that will be
+sent out if it disconnects unexpectedly. See
+\fBmqtt\fR(7)
+for more information.
+.PP
+The minimum requirement for this is to use --will-topic to
+specify which topic the will should be sent out on. This will result in
+a non-retained, zero length message with QoS 0.
+.PP
+Use the --will-retain, -will-payload and --will-qos arguments to
+modify the other will parameters.
+.SH EXAMPLES
+Publish temperature information to localhost with QoS 1:
+.TP 0.2i
+\(bu
+mosquitto_pub -t sensors/temperature -m 32 -q 1
+.PP
+Publish timestamp and temperature information to a remote host on a non-standard port and QoS 0:
+.TP 0.2i
+\(bu
+mosquitto_pub -h 192.168.1.1 -p 1885 -t sensors/temperature -m "1266193804 32"
+.PP
+Publish light switch status. Message is set to retained because there may be a long period of time between light switch events:
+.TP 0.2i
+\(bu
+mosquitto_pub -r -t switches/kitchen_lights/status -m "on"
+.PP
+Send the contents of a file in two ways:
+.TP 0.2i
+\(bu
+mosquitto_pub -t my/topic -f ./data
+.TP 0.2i
+\(bu
+mosquitto_pub -t my/topic -s < ./data
+.PP
+Send parsed electricity usage data from a Current Cost meter, reading from stdin with one line/reading as one message:
+.TP 0.2i
+\(bu
+read_cc128.pl | mosquitto_pub -t sensors/cc128 -l
+.SH BUGS
+\fBmosquitto_pub\fR bug information can be found at http://launchpad.net/mosquitto.
+.SH "SEE ALSO"
+\fBmqtt\fR(7)
+\fBmosquitto_sub\fR(1)
+\fBmosquitto\fR(8)
+\fBlibmosquitto\fR(3)
+.SH AUTHOR
+Roger Light <\*(T<roger@atchoo.org\*(T>>

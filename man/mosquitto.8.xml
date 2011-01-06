@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml-stylesheet type="text/xsl" href="http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "/usr/share/sgml/docbook/xml-dtd-4.4/docbookx.dtd">
+
+<refentry xml:id="mosquitto">
+	<refmeta>
+		<refentrytitle>mosquitto</refentrytitle>
+		<manvolnum>8</manvolnum>
+	</refmeta>
+
+	<refnamediv>
+		<refname>mosquitto</refname>
+		<refpurpose>an mqtt broker</refpurpose>
+	</refnamediv>
+
+	<refsynopsisdiv>
+		<cmdsynopsis>
+			<command>mosquitto</command>
+			<group choice='opt'>
+				<arg><option>-c</option> <replaceable>config file</replaceable></arg>
+			</group>
+			<group choice='opt'>
+				<arg><option>-d</option></arg>
+				<arg><option>--daemon</option></arg>
+			</group>
+			<group choice='opt'>
+				<arg><option>-p</option> <replaceable>port number</replaceable></arg>
+			</group>
+		</cmdsynopsis>
+	</refsynopsisdiv>
+
+	<refsect1>
+		<title>Description</title>
+		<para><command>mosquitto</command> is a broker for the mqtt protocol version 3.</para>
+		<para>It is intended to be a drop in replacement for rsmb, but it's a little way off yet.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Options</title>
+		<variablelist>
+			<varlistentry>
+				<term><option>-c</option></term>
+				<term><option>--config-file</option></term>
+				<listitem>
+					<para>Load configuration from a file. If not given, the default values as described in <citerefentry><refentrytitle>mosquitto.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry> are used.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>-d</option></term>
+				<term><option>--daemon</option></term>
+				<listitem>
+					<para>Run <command>mosquitto</command> in the background as a daemon. All other behaviour remains the same.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>-p</option></term>
+				<term><option>--port</option></term>
+				<listitem>
+					<para>Listen on the port specified instead of the default 1883. This acts in addition to the port setting in the config file. May be specified multiple times to open multiple sockets listening on different ports. This socket will be bound to all network interfaces.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</refsect1>
+
+	<refsect1>
+		<title>Limitations</title>
+		<para><command>mosquitto</command> implements all of the mqtt protocol version 3, but there are some significant limitations compared to rsmb.</para>
+		<itemizedlist mark="circle">
+			<listitem><para>There is only basic bridge support.</para></listitem>
+			<listitem><para>There are fewer configuration options.</para></listitem>
+			<listitem><para>There is less logging information.</para></listitem>
+			<listitem><para>The $SYS hierarchy is smaller.</para></listitem>
+			<listitem><para>It isn't as well tested or documented...</para></listitem>
+		</itemizedlist>
+		<para>It should be noted that all of the above limitations should have &quot;currently&quot; included in them. They will all be fixed at some point.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Broker Status</title>
+		<para>Clients can find information about the broker by subscribing to topics in the $SYS hierarchy as follows. Topics marked as static are only sent once per client on subscription. All other topics are updated every <option>sys_interval</option> seconds. If <option>sys_interval</option> is 0, then updates are not sent.</para>
+		<variablelist>
+			<varlistentry>
+				<term><option>$SYS/broker/bytes/received</option></term>
+				<listitem>
+					<para>The total number of bytes received since the broker started.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/bytes/sent</option></term>
+				<listitem>
+					<para>The total number of bytes sent since the broker started.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/changeset</option></term>
+				<listitem>
+					<para>The repository changeset (revision) associated with this build.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/clients/total</option></term>
+				<listitem>
+					<para>The total number of clients currently either connected to the broker or disconnected but with clean session not set.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/heap/current size</option></term>
+				<listitem>
+					<para>The current size of the heap memory in use by
+					mosquitto. Note that this topic may be unavailable
+					depending on compile time options.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/messages/stored</option></term>
+				<listitem>
+					<para>The number of messages currently held in the message store.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/messages/received</option></term>
+				<listitem>
+					<para>The total number of messages received since the broker started.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/messages/sent</option></term>
+				<listitem>
+					<para>The total number of messages sent since the broker started.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/timestamp</option></term>
+				<listitem>
+					<para>The timestamp at which this particular build of the broker was made. Static.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/uptime</option></term>
+				<listitem>
+					<para>The amount of time in seconds the broker has been online.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>$SYS/broker/version</option></term>
+				<listitem>
+					<para>The version of the broker. Static.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</refsect1>
+
+	<refsect1>
+		<title>Wildcard Topic Subscriptions</title>
+		<para>In addition to allowing clients to subscribe to specific topics,
+		mosquitto also allows the use of two wildcards in subscriptions.
+		<option>+</option> is the wildcard used to match a single level of
+		hierarchy. For example, for a topic of "a/b/c/d", the following example
+		subscriptions will match:</para>
+		<itemizedlist mark="circle">
+			<listitem><para>a/b/c/d</para></listitem>
+			<listitem><para>+/b/c/d</para></listitem>
+			<listitem><para>a/+/c/d</para></listitem>
+			<listitem><para>a/+/+/d</para></listitem>
+			<listitem><para>+/+/+/+</para></listitem>
+		</itemizedlist>
+		<para>The following subscriptions will not match:</para>
+		<itemizedlist mark="circle">
+			<listitem><para>a/b/c</para></listitem>
+			<listitem><para>b/+/c/d</para></listitem>
+			<listitem><para>+/+/+</para></listitem>
+		</itemizedlist>
+		<para>The second wildcard is <option>#</option> and is used to match
+		all subsequent levels of hierarchy. With a topic of "a/b/c/d", the
+		following example subscriptions will match:</para>
+		<itemizedlist mark="circle">
+			<listitem><para>a/b/c/d</para></listitem>
+			<listitem><para>#</para></listitem>
+			<listitem><para>a/#</para></listitem>
+			<listitem><para>a/b/#</para></listitem>
+			<listitem><para>a/b/c/#</para></listitem>
+			<listitem><para>+/b/c/#</para></listitem>
+		</itemizedlist>
+		<para>The $SYS hierarchy does not match a subscription of
+		"#". If you want to observe the entire $SYS hierarchy, subscribe to
+		$SYS/#.</para>
+		<para>Note that the wildcards must be only ever used on their own, so a
+		subscription of "a/b+/c" is not valid use of a wildcard. The
+		<option>#</option> wildcard must only ever be used as the final
+		character of a subscription.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Bridges</title>
+		<para>Multiple brokers can be connected together with the bridging
+		functionality. This is useful where it is desirable to share
+		information between locations, but where not all of the information
+		needs to be shared. An example could be where a number of users are
+		running a broker to help record power usage and for a number of other
+		reasons. The power usage could be shared through bridging all of the
+		user brokers to a common broker, allowing the power usage of all
+		users to be collected and compared. The other information would remain
+		local to each
+		broker.</para>
+		<para>For information on configuring bridges, see
+		<citerefentry><refentrytitle>mosquitto.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Signals</title>
+		<variablelist>
+			<varlistentry>
+				<term>SIGUSR1</term>
+				<listitem>
+					<para>Upon receiving the SIGUSR1 signal, mosquitto will write the persistence database to disk. This signal is only acted upon if persistence is enabled.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>SIGUSR2</term>
+				<listitem>
+					<para>The SIGUSR2 signal causes mosquitto to run VACUUM on
+					the in-memory database. This frees currently unused memory
+					associated with the database.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</refsect1>
+
+	<refsect1>
+		<title>Files</title>
+		<variablelist>
+			<varlistentry>
+				<term><filename>/etc/mosquitto.conf</filename></term>
+				<listitem>
+					<para>Configuration file. See <citerefentry><refentrytitle>mosquitto.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><filename>/var/lib/mosquitto/mosquitto.db</filename></term>
+				<listitem>
+					<para>Persistent message data storage location if persist enabled.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><filename>/etc/hosts.allow</filename></term>
+				<term><filename>/etc/hosts.deny</filename></term>
+				<listitem>
+					<para>Host access control via tcp-wrappers as described in <citerefentry><refentrytitle>hosts_access</refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</refsect1>
+
+	<refsect1>
+		<title>Bugs</title>
+		<para><command>mosquitto</command> bug information can be found at <uri type="webpage">http://launchpad.net/mosquitto</uri>.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>See Also</title>
+		<para>
+			<citerefentry>
+				<refentrytitle>mosquitto.conf</refentrytitle>
+				<manvolnum>5</manvolnum>
+			</citerefentry>
+			<citerefentry>
+				<refentrytitle>hosts_access</refentrytitle>
+				<manvolnum>5</manvolnum>
+			</citerefentry>
+			<citerefentry>
+				<refentrytitle>mosquitto_pub</refentrytitle>
+				<manvolnum>1</manvolnum>
+			</citerefentry>
+			<citerefentry>
+				<refentrytitle>mosquitto_sub</refentrytitle>
+				<manvolnum>1</manvolnum>
+			</citerefentry>
+			<citerefentry>
+				<refentrytitle>libmosquitto</refentrytitle>
+				<manvolnum>3</manvolnum>
+			</citerefentry>
+		</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Thanks</title>
+		<para>Thanks to Andy Stanford-Clark for being one of the people who came up with MQTT in the first place and providing clarifications of the protocol.</para>
+		<para>Thanks also to everybody at the Ubuntu UK Podcast and Linux Outlaws for organising OggCamp, where Andy gave a talk that inspired mosquitto.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Author</title>
+		<para>Roger Light <email>roger@atchoo.org</email></para>
+	</refsect1>
+</refentry>

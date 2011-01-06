@@ -1,0 +1,340 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml-stylesheet type="text/xsl" href="http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "/usr/share/sgml/docbook/xml-dtd-4.4/docbookx.dtd">
+
+<refentry xml:id="libmosquitto">
+	<refmeta>
+		<refentrytitle>libmosquitto</refentrytitle>
+		<manvolnum>3</manvolnum>
+	</refmeta>
+
+	<refnamediv>
+		<refname>libmosquitto</refname>
+		<refpurpose>MQTT version 3.1 client library</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Description</title>
+		<para>This is an overview of how to use libmosquitto to create MQTT
+		aware client programs. There may be separate man pages on each of the
+		functions described here in the future. There are also bindings for
+		libmosquitto for C++ and Python. They are not documented here.</para>
+		<para>This is fairly incomplete, please see mosquitto.h for a better
+		description of the functions.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Status</title>
+		<para>The libmosquitto api is currently regarded as experimental and
+		unstable and may change in future releases.</para>
+	</refsect1>
+
+	<refsect1>
+		<title>libmosquitto symbol names</title>
+		<para>All public functions in libmosquitto have the prefix
+		"mosquitto_". Any other functions defined in the source code are to be
+		treated as private functions and may change between any release. Do not
+		use these functions!</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Functions</title>
+
+		<refsect2>
+			<title>Library version</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>unsigned long <function>mosquitto_lib_version</function></funcdef>
+			<paramdef><parameter>int *major</parameter></paramdef>
+			<paramdef><parameter>int *minor</parameter></paramdef>
+			<paramdef><parameter>int *revision</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+			<para>Obtain version information about the library. If any of
+			major, minor or revision are not NULL they will return the
+			corresponding version numbers. The return value is an integer
+			representation of the complete version number (e.g. 9000 for 0.9)
+			that can be used for comparisons.</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Library initialisation and cleanup</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_lib_init</function></funcdef>
+			<void/></funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_lib_cleanup</function></funcdef>
+			<void/></funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Client constructor/destructor</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>struct mosquitto *<function>mosquitto_new</function></funcdef>
+			<paramdef><parameter>const char *id</parameter></paramdef>
+			<paramdef><parameter>void *obj</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>void <function>mosquitto_destroy</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Logging</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_log_init</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>int priorities</parameter></paramdef>
+			<paramdef><parameter>int destinations</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+
+			<para>Configure the logging settings for this client. Returns 0 on success, 1 on error.</para>
+			<para>Set <parameter>priorities</parameter> by ORing any of the items in the following list:
+			<itemizedlist mark="circle">
+				<listitem>MOSQ_LOG_INFO</listitem>
+				<listitem>MOSQ_LOG_NOTICE</listitem>
+				<listitem>MOSQ_LOG_WARNING</listitem>
+				<listitem>MOSQ_LOG_ERROR</listitem>
+				<listitem>MOSQ_LOG_DEBUG</listitem>
+			</itemizedlist>
+			</para>
+			<para>Set <parameter>destinations</parameter> by ORing any of the items in the following list:
+			<itemizedlist mark="circle">
+				<listitem>MOSQ_LOG_NONE</listitem>
+				<listitem>MOSQ_LOG_STDOUT</listitem>
+				<listitem>MOSQ_LOG_STDERR</listitem>
+			</itemizedlist>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Wills</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_will_set</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>bool will</parameter></paramdef>
+			<paramdef><parameter>const char *topic</parameter></paramdef>
+			<paramdef><parameter>uint32_t payloadlen</parameter></paramdef>
+			<paramdef><parameter>const uint8_t *payload</parameter></paramdef>
+			<paramdef><parameter>int qos</parameter></paramdef>
+			<paramdef><parameter>bool retain</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Connect/disconnect</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>void <function>mosquitto_connect</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>const char *host</parameter></paramdef>
+			<paramdef><parameter>int port</parameter></paramdef>
+			<paramdef><parameter>int keepalive</parameter></paramdef>
+			<paramdef><parameter>bool clean_session</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_disconnect</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Publish</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_publish</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>uint16_t *mid</parameter></paramdef>
+			<paramdef><parameter>const char *topic</parameter></paramdef>
+			<paramdef><parameter>uint32_t payloadlen</parameter></paramdef>
+			<paramdef><parameter>const uint8_t *payload</parameter></paramdef>
+			<paramdef><parameter>int qos</parameter></paramdef>
+			<paramdef><parameter>bool retain</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Subscribe/unsubscribe</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_subscribe</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>uint16_t *mid</parameter></paramdef>
+			<paramdef><parameter>const char *sub</parameter></paramdef>
+			<paramdef><parameter>int qos</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_unsubscribe</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>uint16_t *mid</parameter></paramdef>
+			<paramdef><parameter>const char *sub</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Network loop</title>
+
+			<para>
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_loop</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			<paramdef><parameter>int timeout</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_loop_read</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_loop_write</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_loop_misc</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+
+			<funcsynopsis><funcprototype><funcdef>int <function>mosquitto_socket</function></funcdef>
+			<paramdef><parameter>struct mosquitto *mosq</parameter></paramdef>
+			</funcprototype></funcsynopsis>
+			</para>
+		</refsect2>
+
+		<refsect2>
+			<title>Callbacks</title>
+			<para>See mosquitto.h</para>
+		</refsect2>
+
+<!--
+
+struct mosquitto_message{
+	struct mosquitto_message *next;
+	time_t timestamp;
+	enum mosquitto_msg_direction direction;
+	enum mosquitto_msg_state state;
+	uint16_t mid;
+	char *topic;
+	uint8_t *payload;
+	uint32_t payloadlen;
+	int qos;
+	bool retain;
+	bool dup;
+};
+
+struct mosquitto;
+
+void mosquitto_connect_callback_set(struct mosquitto *mosq, void (*on_connect)(void *, int));
+void mosquitto_publish_callback_set(struct mosquitto *mosq, void (*on_publish)(void *, uint16_t));
+void mosquitto_message_callback_set(struct mosquitto *mosq, void (*on_message)(void *, struct mosquitto_message *));
+void mosquitto_subscribe_callback_set(struct mosquitto *mosq, void (*on_subscribe)(void *, uint16_t, int, uint8_t *));
+void mosquitto_unsubscribe_callback_set(struct mosquitto *mosq, void (*on_unsubscribe)(void *, uint16_t));
+
+void mosquitto_message_retry_check(struct mosquitto *mosq);
+void mosquitto_message_retry_set(struct mosquitto *mosq, unsigned int message_retry);
+void mosquitto_message_cleanup(struct mosquitto_message **message);
+
+-->
+	</refsect1>
+
+	<refsect1>
+		<title>Examples</title>
+		<para><programlisting language="C">
+#include &lt;mosquitto.h&gt;
+
+void my_message_callback(void *obj, struct mosquitto_message *message)
+{
+	if(message->payloadlen){
+		printf("%s %s\n", message->topic, message->payload);
+	}else{
+		printf("%s (null)\n", message->topic);
+	}
+	fflush(stdout);
+}
+
+void my_connect_callback(void *obj, int result)
+{
+	struct mosquitto *mosq = obj;
+
+	int i;
+	if(!result){
+		mosquitto_subscribe(mosq, topics[i], topic_qos);
+	}else{
+		fprintf(stderr, "Connect failed\n");
+	}
+}
+
+void my_subscribe_callback(void *obj, uint16_t mid, int qos_count, const uint8_t *granted_qos)
+{
+	int i;
+
+	printf("Subscribed (mid: %d): %d", mid, granted_qos[0]);
+	for(i=1; i&lt;qos_count; i++){
+		printf(", %d", granted_qos[i]);
+	}
+	printf("\n");
+}
+
+int main(int argc, char *argv[])
+{
+	char id[30];
+	int i;
+	char *host = "localhost";
+	int port = 1883;
+	int keepalive = 60;
+	bool clean_session = true;
+	struct mosquitto *mosq = NULL;
+
+	mosq = mosquitto_new(id, NULL);
+	if(!mosq){
+		fprintf(stderr, "Error: Out of memory.\n");
+		return 1;
+	}
+	mosquitto_log_init(mosq, MOSQ_LOG_DEBUG | MOSQ_LOG_ERR | MOSQ_LOG_WARNING
+			| MOSQ_LOG_NOTICE | MOSQ_LOG_INFO, MOSQ_LOG_STDERR);
+
+	mosquitto_connect_callback_set(mosq, my_connect_callback);
+	mosquitto_message_callback_set(mosq, my_message_callback);
+	mosquitto_subscribe_callback_set(mosq, my_subscribe_callback);
+
+	if(mosquitto_connect(mosq, host, port, keepalive, clean_session)){
+		fprintf(stderr, "Unable to connect.\n");
+		return 1;
+	}
+
+	while(!mosquitto_loop(mosq, -1)){
+	}
+	mosquitto_destroy(mosq);
+	return 0;
+}
+		</programlisting></para>
+	</refsect1>
+	<refsect1>
+		<title>See Also</title>
+		<para>
+			<citerefentry>
+				<refentrytitle>mosquitto</refentrytitle>
+				<manvolnum>8</manvolnum>
+			</citerefentry>
+			<citerefentry>
+				<refentrytitle>mqtt</refentrytitle>
+				<manvolnum>7</manvolnum>
+			</citerefentry>
+		</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Author</title>
+		<para>Roger Light <email>roger@atchoo.org</email></para>
+	</refsect1>
+</refentry>
+

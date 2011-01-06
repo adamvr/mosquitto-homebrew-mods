@@ -1,0 +1,321 @@
+'\" -*- coding: us-ascii -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH libmosquitto 3 "3 December 2010" "" ""
+.SH NAME
+libmosquitto \- MQTT version 3.1 client library
+.SH DESCRIPTION
+This is an overview of how to use libmosquitto to create MQTT
+aware client programs. There may be separate man pages on each of the
+functions described here in the future. There are also bindings for
+libmosquitto for C++ and Python. They are not documented here.
+.PP
+This is fairly incomplete, please see mosquitto.h for a better
+description of the functions.
+.SH STATUS
+The libmosquitto api is currently regarded as experimental and
+unstable and may change in future releases.
+.SH "LIBMOSQUITTO SYMBOL NAMES"
+All public functions in libmosquitto have the prefix
+"mosquitto_". Any other functions defined in the source code are to be
+treated as private functions and may change between any release. Do not
+use these functions!
+.SH FUNCTIONS
+.SS "LIBRARY VERSION"
+'nh
+.fi
+.ad l
+\*(T<unsigned long \fBmosquitto_lib_version\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIint *major\fR, \fIint *minor\fR, \fIint *revision\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.PP
+Obtain version information about the library. If any of
+major, minor or revision are not NULL they will return the
+corresponding version numbers. The return value is an integer
+representation of the complete version number (e.g. 9000 for 0.9)
+that can be used for comparisons.
+.SS "LIBRARY INITIALISATION AND CLEANUP"
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_lib_init\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(void);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_lib_cleanup\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(void);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS "CLIENT CONSTRUCTOR/DESTRUCTOR"
+'nh
+.fi
+.ad l
+\*(T<struct mosquitto *\fBmosquitto_new\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIconst char *id\fR, \fIvoid *obj\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<void \fBmosquitto_destroy\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS LOGGING
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_log_init\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIint priorities\fR, \fIint destinations\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.PP
+Configure the logging settings for this client. Returns 0 on success, 1 on error.
+.PP
+Set \*(T<priorities\*(T> by ORing any of the items in the following list:
+.TP 0.2i
+\(bu
+MOSQ_LOG_INFO
+.TP 0.2i
+\(bu
+MOSQ_LOG_NOTICE
+.TP 0.2i
+\(bu
+MOSQ_LOG_WARNING
+.TP 0.2i
+\(bu
+MOSQ_LOG_ERROR
+.TP 0.2i
+\(bu
+MOSQ_LOG_DEBUG
+.PP
+Set \*(T<destinations\*(T> by ORing any of the items in the following list:
+.TP 0.2i
+\(bu
+MOSQ_LOG_NONE
+.TP 0.2i
+\(bu
+MOSQ_LOG_STDOUT
+.TP 0.2i
+\(bu
+MOSQ_LOG_STDERR
+.SS WILLS
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_will_set\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIbool will\fR, \fIconst char *topic\fR, \fIuint32_t payloadlen\fR, \fIconst uint8_t *payload\fR, \fIint qos\fR, \fIbool retain\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS CONNECT/DISCONNECT
+'nh
+.fi
+.ad l
+\*(T<void \fBmosquitto_connect\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIconst char *host\fR, \fIint port\fR, \fIint keepalive\fR, \fIbool clean_session\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_disconnect\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS PUBLISH
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_publish\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIuint16_t *mid\fR, \fIconst char *topic\fR, \fIuint32_t payloadlen\fR, \fIconst uint8_t *payload\fR, \fIint qos\fR, \fIbool retain\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS SUBSCRIBE/UNSUBSCRIBE
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_subscribe\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIuint16_t *mid\fR, \fIconst char *sub\fR, \fIint qos\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_unsubscribe\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIuint16_t *mid\fR, \fIconst char *sub\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS "NETWORK LOOP"
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_loop\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR, \fIint timeout\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_loop_read\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_loop_write\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_loop_misc\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+'nh
+.fi
+.ad l
+\*(T<int \fBmosquitto_socket\fR\*(T> \kx
+.if (\nx>(\n(.l/2)) .nr x (\n(.l/5)
+'in \n(.iu+\nxu
+\*(T<(\fIstruct mosquitto *mosq\fR);\*(T>
+'in \n(.iu-\nxu
+.ad b
+'hy
+.SS CALLBACKS
+See mosquitto.h
+.SH EXAMPLES
+.nf
+\*(T<
+#include <mosquitto.h>
+
+void my_message_callback(void *obj, struct mosquitto_message *message)
+{
+	if(message\->payloadlen){
+		printf("%s %s\en", message\->topic, message\->payload);
+	}else{
+		printf("%s (null)\en", message\->topic);
+	}
+	fflush(stdout);
+}
+
+void my_connect_callback(void *obj, int result)
+{
+	struct mosquitto *mosq = obj;
+
+	int i;
+	if(!result){
+		mosquitto_subscribe(mosq, topics[i], topic_qos);
+	}else{
+		fprintf(stderr, "Connect failed\en");
+	}
+}
+
+void my_subscribe_callback(void *obj, uint16_t mid, int qos_count, const uint8_t *granted_qos)
+{
+	int i;
+
+	printf("Subscribed (mid: %d): %d", mid, granted_qos[0]);
+	for(i=1; i<qos_count; i++){
+		printf(", %d", granted_qos[i]);
+	}
+	printf("\en");
+}
+
+int main(int argc, char *argv[])
+{
+	char id[30];
+	int i;
+	char *host = "localhost";
+	int port = 1883;
+	int keepalive = 60;
+	bool clean_session = true;
+	struct mosquitto *mosq = NULL;
+
+	mosq = mosquitto_new(id, NULL);
+	if(!mosq){
+		fprintf(stderr, "Error: Out of memory.\en");
+		return 1;
+	}
+	mosquitto_log_init(mosq, MOSQ_LOG_DEBUG | MOSQ_LOG_ERR | MOSQ_LOG_WARNING
+			| MOSQ_LOG_NOTICE | MOSQ_LOG_INFO, MOSQ_LOG_STDERR);
+
+	mosquitto_connect_callback_set(mosq, my_connect_callback);
+	mosquitto_message_callback_set(mosq, my_message_callback);
+	mosquitto_subscribe_callback_set(mosq, my_subscribe_callback);
+
+	if(mosquitto_connect(mosq, host, port, keepalive, clean_session)){
+		fprintf(stderr, "Unable to connect.\en");
+		return 1;
+	}
+
+	while(!mosquitto_loop(mosq, \-1)){
+	}
+	mosquitto_destroy(mosq);
+	return 0;
+}
+		\*(T>
+.fi
+.SH "SEE ALSO"
+\fBmosquitto\fR(8)
+\fBmqtt\fR(7)
+.SH AUTHOR
+Roger Light <\*(T<roger@atchoo.org\*(T>>
