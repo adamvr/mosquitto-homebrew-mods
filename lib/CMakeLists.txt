@@ -1,4 +1,5 @@
 add_subdirectory(cpp)
+add_subdirectory(python)
 
 include_directories(${mosquitto_SOURCE_DIR} ${mosquitto_SOURCE_DIR}/lib
 			${STDBOOL_H_PATH} ${STDINT_H_PATH})
