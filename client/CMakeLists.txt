@@ -12,7 +12,5 @@ set_target_properties(mosquitto_pub PROPERTIES
 	VERSION ${VERSION})
 set_target_properties(mosquitto_sub PROPERTIES
 	VERSION ${VERSION})
-install(FILES ../man/mosquitto_pub.1 ../man/mosquitto_sub.1
-	DESTINATION ${MANDEST}/man1)
 install(TARGETS mosquitto_pub RUNTIME DESTINATION ${BINDEST} LIBRARY DESTINATION ${LIBDEST})
 install(TARGETS mosquitto_sub RUNTIME DESTINATION ${BINDEST} LIBRARY DESTINATION ${LIBDEST})

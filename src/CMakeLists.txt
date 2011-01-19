@@ -38,9 +38,6 @@ set_target_properties(mosquitto PROPERTIES
 
 install(TARGETS mosquitto RUNTIME DESTINATION ${BINDEST} LIBRARY DESTINATION ${LIBDEST})
 
-install(FILES ../man/mosquitto.8 DESTINATION ${MANDEST}/man8)
-install(FILES ../man/mosquitto.conf.5 DESTINATION ${MANDEST}/man5)
-
 if (UNIX)
 	install(CODE "EXEC_PROGRAM(/sbin/ldconfig)")
 endif (UNIX)
