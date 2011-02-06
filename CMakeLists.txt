@@ -24,11 +24,13 @@ if (WIN32)
     set (LIBDEST .)
     set (SHAREDEST .)
     set (MANDEST .)
+    set (CONFDEST .)
 else (WIN32)
     set (BINDEST bin)
     set (LIBDEST lib${LIB_SUFFIX})
     set (SHAREDEST share/mosquitto)
     set (MANDEST share/man)
+    set (CONFDEST etc)
 endif (WIN32)
 
 # ========================================
@@ -46,6 +48,8 @@ if (NOT HAVE_STDINT_H)
 	set (STDINT_H_PATH ${mosquitto_SOURCE_DIR}/compat/stdint)
 endif (NOT HAVE_STDINT_H)
 
+
+
 # ========================================
 # Include projects
 # ========================================
@@ -54,3 +58,9 @@ add_subdirectory(lib)
 add_subdirectory(client)
 add_subdirectory(src)
 add_subdirectory(man)
+
+# ========================================
+# Install config file
+# ========================================
+
+install(FILES ./mosquitto.conf DESTINATION ${CONFDEST}/mosquitto.conf)
