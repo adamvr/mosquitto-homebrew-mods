@@ -48,8 +48,6 @@ if (NOT HAVE_STDINT_H)
 	set (STDINT_H_PATH ${mosquitto_SOURCE_DIR}/compat/stdint)
 endif (NOT HAVE_STDINT_H)
 
-
-
 # ========================================
 # Include projects
 # ========================================
