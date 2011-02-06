@@ -61,4 +61,4 @@ add_subdirectory(man)
 # Install config file
 # ========================================
 
-install(FILES ./mosquitto.conf DESTINATION ${CONFDEST}/mosquitto.conf)
+install(FILES ./mosquitto.conf DESTINATION ${CONFDEST}/)
